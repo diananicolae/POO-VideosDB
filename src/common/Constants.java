@@ -2,7 +2,7 @@ package common;
 
 /**
  * The class contains the minimum of constants needed.
- *
+ * <p>
  * You can define your own constants here or create separate files.
  */
 public final class Constants {
@@ -53,7 +53,7 @@ public final class Constants {
     public static final String MESSAGE = "message";
     public static final String QUERY = "query";
     public static final String COMMAND = "command";
-    public static final String RECOMMENDATION = "Recommendation";
+    public static final String RECOMMENDATION = "recommendation";
 
     // checker constants
     public static final String ID_STRING = "id";

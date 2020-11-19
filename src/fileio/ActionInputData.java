@@ -11,7 +11,7 @@ import java.util.List;
  */
 public final class ActionInputData {
     /**
-     * Action id
+     * action.Action id
      */
     private final int actionId;
     /**

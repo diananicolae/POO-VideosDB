@@ -1,14 +1,18 @@
 package utils;
 
 import actor.ActorsAwards;
+import user.User;
 import common.Constants;
-import entertainment.Genre;
+import entertainment.*;
+import fileio.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * The class contains static methods that helps with parsing.
@@ -89,7 +93,7 @@ public final class Utils {
     /**
      * Transforms an array of JSON's into a map
      * @param jsonActors array of JSONs
-     * @return a map with ActorsAwardsa as key and Integer as value
+     * @return a map with ActorsAwards as key and Integer as value
      */
     public static Map<ActorsAwards, Integer> convertAwards(final JSONArray jsonActors) {
         Map<ActorsAwards, Integer> awards = new LinkedHashMap<>();
@@ -123,4 +127,6 @@ public final class Utils {
 
         return mapVideos;
     }
+
+
 }

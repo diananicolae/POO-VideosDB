@@ -1,7 +1,8 @@
 package main;
 
-import checker.Checkstyle;
+import actions.ProcessData;
 import checker.Checker;
+import checker.Checkstyle;
 import common.Constants;
 import fileio.Input;
 import fileio.InputLoader;
@@ -16,7 +17,7 @@ import java.nio.file.Paths;
 import java.util.Objects;
 
 /**
- * The entry point to this homework. It runs the checker that tests your implentation.
+ * The entry point to this homework. It runs the checker that tests your implementation.
  */
 public final class Main {
     /**
@@ -27,6 +28,7 @@ public final class Main {
 
     /**
      * Call the main checker and the coding style checker
+     *
      * @param args from command line
      * @throws IOException in case of exceptions to reading / writing
      */
@@ -71,7 +73,8 @@ public final class Main {
         JSONArray arrayResult = new JSONArray();
 
         //TODO add here the entry point to your implementation
-
+        ProcessData data = new ProcessData(input);
+        data.processActions(arrayResult, fileWriter);
         fileWriter.closeJSON(arrayResult);
     }
 }
