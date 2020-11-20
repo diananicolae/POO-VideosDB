@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class User {
+public final class User {
     private String username;
     private String subscription;
     private Map<String, Integer> history;

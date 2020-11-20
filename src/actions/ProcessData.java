@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProcessData {
+public final class ProcessData {
     private final Input input;
     private String message;
     private User user;
@@ -24,14 +24,15 @@ public class ProcessData {
     private Movie movie;
     private Serial serial;
 
-    private List<Actor> actors;
-    private List<User> users;
-    private List<Movie> movies;
-    private List<Serial> serials;
-    private List<Video> videos;
+    public static List<Actor> actors;
+    public static List<User> users;
+    public static List<Serial> serials;
+    public static List<Video> videos;
+    public static List<Movie> movies;
 
-    public ProcessData(Input input) {
+    public ProcessData(final Input input) {
         this.input = input;
+        actors = ProcessUtils.transformActorInput(input.getActors());
         users = ProcessUtils.transformUserInput(input.getUsers());
         movies = ProcessUtils.transformMovieInput(input.getMovies());
         serials = ProcessUtils.transformSerialInput(input.getSerials());
@@ -40,35 +41,86 @@ public class ProcessData {
         videos.addAll(serials);
     }
 
-    public void processActions(JSONArray arrayResult, Writer fileWriter) throws IOException {
+    public void processActions(final JSONArray arrayResult, final Writer fileWriter)
+            throws IOException {
         for (ActionInputData action : input.getCommands()) {
             if (action.getActionType().equals(Constants.COMMAND)) {
                 switch (action.getType()) {
-                    case "favorite" -> {
-                        user = ProcessUtils.getUserInstance(action.getUsername(), users);
-                        video = ProcessUtils.getVideoInstance(action.getTitle(), videos);
-                        message = Commands.Favorite(user, video);
+                    case Constants.FAVORITE -> {
+                        message = Commands.favorite(action.getUsername(), action.getTitle());
                     }
-                    case "view" -> {
-                        user = ProcessUtils.getUserInstance(action.getUsername(), users);
-                        video = ProcessUtils.getVideoInstance(action.getTitle(), videos);
-                        message = Commands.View(user, video);
+                    case Constants.VIEW -> {
+                        message = Commands.view(action.getUsername(), action.getTitle());
                     }
-                    case "rating" -> {
-                        user = ProcessUtils.getUserInstance(action.getUsername(), users);
+                    case Constants.RATING -> {
                         if (action.getSeasonNumber() > 0) {
-                            serial = ProcessUtils.getSerialInstance(action.getTitle(), serials);
-                            message = Commands.Rating(user, serial, action.getSeasonNumber(),
-                                    action.getGrade());
+                            message = Commands.rating(action.getUsername(), action.getTitle(),
+                                    action.getSeasonNumber(), action.getGrade());
                         } else {
-                            movie = ProcessUtils.getMovieInstance(action.getTitle(), movies);
-                            message = Commands.Rating(user, movie, action.getGrade());
+                            message = Commands.rating(action.getUsername(), action.getTitle(),
+                                    action.getGrade());
                         }
+                    }
+                    default -> {
                     }
                 }
             }
             if (action.getActionType().equals(Constants.QUERY)) {
+                switch (action.getObjectType()) {
+                    case Constants.ACTORS -> {
+                        switch (action.getCriteria()) {
+                            case Constants.AVERAGE -> {
+                                message = Queries.actorAverage(action.getNumber(),
+                                        action.getSortType());
+                            }
+                            case Constants.AWARDS -> {
+                                message = Queries.actorAwards(action.getSortType(),
+                                        action.getFilters());
+                            }
+                            case Constants.FILTER_DESCRIPTION -> {
+                                message = Queries.actorDescription(action.getSortType(),
+                                        action.getFilters());
+                            }
+                            default -> {
+                            }
+                        }
+                    }
+                    case Constants.MOVIES, Constants.SHOWS -> {
+                        switch (action.getCriteria()) {
+                            case Constants.RATINGS -> {
+                                message = Queries.videoRatings(action.getNumber(),
+                                        action.getSortType(), action.getFilters(),
+                                        action.getObjectType());
+                            }
+                            case Constants.FAVORITE -> {
+                                message = Queries.favoriteVideos(action.getNumber(),
+                                        action.getSortType(), action.getFilters(),
+                                        action.getObjectType());
+                            }
+                            case Constants.LONGEST -> {
+                                message = Queries.longestVideos(action.getNumber(),
+                                        action.getSortType(), action.getFilters(),
+                                        action.getObjectType());
+                            }
+                            case Constants.MOST_VIEWED -> {
+                                message = Queries.mostViewedVideos(action.getNumber(),
+                                        action.getSortType(), action.getFilters(),
+                                        action.getObjectType());
+                            }
+                            default -> {
+                            }
+                        }
+                    }
+                    case Constants.USERS -> {
+                        if (Constants.NUM_RATINGS.equals(action.getCriteria())) {
+                            message = Queries.mostActiveUsers(action.getNumber(),
+                                    action.getSortType());
+                        }
+                    }
+                    default -> {
 
+                    }
+                }
             }
             JSONObject object = fileWriter.writeFile(action.getActionId(), "", message);
             arrayResult.add(object);

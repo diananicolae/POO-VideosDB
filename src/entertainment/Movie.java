@@ -16,13 +16,16 @@ public final class Movie extends Video {
     }
 
     public Double averageRating() {
-        Double averageRating = null;
-
-        for (Double rating : ratings) {
-            averageRating += rating;
+        if (ratings.isEmpty()) {
+            return null;
         }
-        averageRating /= ratings.size();
-        return averageRating;
+
+        Double rating = 0.0;
+        for (Double movieRating : ratings) {
+            rating += movieRating;
+        }
+        rating /= ratings.size();
+        return rating;
     }
 
     public int getDuration() {

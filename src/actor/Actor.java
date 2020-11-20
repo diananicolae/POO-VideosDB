@@ -3,11 +3,12 @@ package actor;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class Actor {
+public final class Actor {
     private String name;
     private String careerDescription;
     private ArrayList<String> filmography;
     private Map<ActorsAwards, Integer> awards;
+    private int average;
 
     public Actor(final String name, final String careerDescription,
                  final ArrayList<String> filmography,
@@ -38,6 +39,9 @@ public class Actor {
         return awards;
     }
 
+    public int getAwardsNumber() {
+        return awards.size();
+    }
     public String getCareerDescription() {
         return careerDescription;
     }

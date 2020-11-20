@@ -2,7 +2,7 @@ package entertainment;
 
 import java.util.ArrayList;
 
-public class Video {
+public abstract class Video {
     private String title;
     private int year;
     private ArrayList<String> cast;
@@ -17,8 +17,11 @@ public class Video {
     }
 
     public Video() {
-
     }
+
+    public abstract Double averageRating();
+
+    public abstract int getDuration();
 
     public final String getTitle() {
         return title;

@@ -10,9 +10,9 @@ import java.io.IOException;
 
 public class Test2 {
     public static void main(String[] args) throws IOException {
-        InputLoader inputLoader = new InputLoader("test_db/test_files/single_command_favorite.json");
+        InputLoader inputLoader = new InputLoader("test_db/test_files/single_query_favorite_movie.json");
         Input input = inputLoader.readData();
-        System.out.println(input.getCommands().size());
+
         Writer fileWriter = new Writer("result/test");
         JSONArray arrayResult = new JSONArray();
 

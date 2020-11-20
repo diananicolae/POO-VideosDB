@@ -16,18 +16,34 @@ public final class Serial extends Video {
     }
 
     public Serial() {
-
     }
 
     public Double averageRating() {
-        Double rating = null;
+        Double rating = 0.0;
+        int unratedSeasons = 0;
+
         for (Season season : seasons) {
+            if (season.getRatings().isEmpty()) {
+                unratedSeasons++;
+                continue;
+            }
             for (Double seasonRating : season.getRatings()) {
                 rating += seasonRating / season.getRatings().size();
             }
         }
+        if (unratedSeasons == numberOfSeasons) {
+            return null;
+        }
         rating /= numberOfSeasons;
         return rating;
+    }
+
+    public int getDuration() {
+        int duration = 0;
+        for (Season season : seasons) {
+            duration += season.getDuration();
+        }
+        return duration;
     }
 
     public int getNumberSeason() {

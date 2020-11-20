@@ -5,23 +5,31 @@ import entertainment.Serial;
 import entertainment.Video;
 import user.User;
 
-public class Commands {
+public final class Commands {
+    private Commands() {
+    }
 
-    public static String Favorite(User user, Video video) {
+    public static String favorite(final String username, final String title) {
+        User user = ProcessUtils.getUserInstance(username, ProcessData.users);
+        Video video = ProcessUtils.getVideoInstance(title, ProcessData.videos);
+
         if (user.getFavoriteMovies().contains(video.getTitle())) {
-            return "error -> " + video.getTitle() +
-                    " is already in favourite list";
+            return "error -> " + video.getTitle()
+                    + " is already in favourite list";
         }
         if (user.getHistory().containsKey(video.getTitle())) {
             user.getFavoriteMovies().add(video.getTitle());
-            return "success -> " + video.getTitle() +
-                    " was added as favourite";
+            return "success -> " + video.getTitle()
+                    + " was added as favourite";
         } else {
             return "error -> " + video.getTitle() + " is not seen";
         }
     }
 
-    public static String View(User user, Video video) {
+    public static String view(final String username, final String title) {
+        User user = ProcessUtils.getUserInstance(username, ProcessData.users);
+        Video video = ProcessUtils.getVideoInstance(title, ProcessData.videos);
+
         int noViews;
         if (user.getHistory().containsKey(video.getTitle())) {
             noViews = user.getHistory().get(video.getTitle());
@@ -31,11 +39,14 @@ public class Commands {
             noViews = 1;
             user.getHistory().put(video.getTitle(), noViews);
         }
-        return "success -> " + video.getTitle() +
-                " was viewed with total views of " + noViews;
+        return "success -> " + video.getTitle()
+                + " was viewed with total views of " + noViews;
     }
 
-    public static String Rating(User user, Movie movie, Double rating) {
+    public static String rating(final String username, final String title, final Double rating) {
+        User user = ProcessUtils.getUserInstance(username, ProcessData.users);
+        Movie movie = ProcessUtils.getMovieInstance(title, ProcessData.movies);
+
         if (user.getRatedMovies().containsKey(movie.getTitle())) {
             return "error -> " + movie.getTitle() + " has been already rated";
         }
@@ -49,9 +60,13 @@ public class Commands {
         }
     }
 
-    public static String Rating(User user, Serial serial, Integer season, Double rating) {
-        if (user.getRatedMovies().containsKey(serial.getTitle()) &&
-                user.getRatedMovies().get(serial.getTitle()).equals(season)) {
+    public static String rating(final String username, final String title,
+                                final Integer season, final Double rating) {
+        User user = ProcessUtils.getUserInstance(username, ProcessData.users);
+        Serial serial = ProcessUtils.getSerialInstance(title, ProcessData.serials);
+
+        if (user.getRatedMovies().containsKey(serial.getTitle())
+                && user.getRatedMovies().get(serial.getTitle()).equals(season)) {
             return "error -> " + serial.getTitle() + " has been already rated";
         }
         if (user.getHistory().containsKey(serial.getTitle())) {

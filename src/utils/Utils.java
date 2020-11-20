@@ -1,17 +1,13 @@
 package utils;
 
 import actor.ActorsAwards;
-import user.User;
 import common.Constants;
-import entertainment.*;
-import fileio.*;
+import entertainment.Genre;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
