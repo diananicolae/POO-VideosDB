@@ -51,12 +51,25 @@ public final class Queries {
                                      final List<List<String>> filters) {
         List<Actor> actors = ProcessUtils.getFilteredActors(filters);
         actors.sort((actor1, actor2) -> {
-            if (actor1.getAwardsNumber() == actor2.getAwardsNumber()) {
-                return actor1.getName().compareTo(actor2.getName());
+            switch (sortType) {
+                case Constants.ASC -> {
+                    if (actor1.getAwardsNumber() == actor2.getAwardsNumber()) {
+                        return actor1.getName().compareTo(actor2.getName());
+                    }
+                    return actor1.getAwardsNumber() - actor2.getAwardsNumber();
+                }
+                case Constants.DESC -> {
+                    if (actor1.getAwardsNumber() == actor2.getAwardsNumber()) {
+                        return actor2.getName().compareTo(actor1.getName());
+                    }
+                    return actor2.getAwardsNumber() - actor1.getAwardsNumber();
+                }
+                default -> {
+                    return 0;
+                }
             }
-            return actor1.getAwardsNumber() - actor2.getAwardsNumber();
         });
-        return ProcessUtils.getActorsList(sortType, actors);
+        return ProcessUtils.getActorsList(actors);
     }
 
 
@@ -64,7 +77,10 @@ public final class Queries {
                                           final List<List<String>> filters) {
         List<Actor> actors = ProcessUtils.getFilteredActors(filters);
         actors.sort(Comparator.comparing(Actor::getName));
-        return ProcessUtils.getActorsList(sortType, actors);
+        if (sortType.equals(Constants.DESC)) {
+            Collections.reverse(actors);
+        }
+        return ProcessUtils.getActorsList(actors);
     }
 
 
@@ -144,7 +160,7 @@ public final class Queries {
             double noViews = 0;
             for (User user : ProcessData.users) {
                 if (user.getHistory().containsKey(video.getTitle())) {
-                    noViews++;
+                    noViews += user.getHistory().get(video.getTitle());
                 }
             }
             if (noViews > 0) {

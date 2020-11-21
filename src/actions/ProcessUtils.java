@@ -13,7 +13,6 @@ import user.User;
 import utils.Utils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -113,7 +112,7 @@ public final class ProcessUtils {
 
         if (filters.get(Constants.WORDS_FILTER) != null) {
             for (String word : filters.get(Constants.WORDS_FILTER)) {
-                filteredList.removeIf(actor -> !actor.getCareerDescription().contains(word));
+                filteredList.removeIf(actor -> !actor.getCareerDescription().toLowerCase().contains(word));
             }
         }
         if (filters.get(Constants.AWARDS_FILTER) != null) {
@@ -125,14 +124,10 @@ public final class ProcessUtils {
         return filteredList;
     }
 
-    public static String getActorsList(final String sortType, final List<Actor> actors) {
+    public static String getActorsList(final List<Actor> actors) {
         if (actors.isEmpty()) {
             return "Query result: []";
         }
-        if (sortType.equals(Constants.DESC)) {
-            Collections.reverse(actors);
-        }
-
         List<String> actorNames = new ArrayList<>();
         for (Actor actor : actors) {
             actorNames.add(actor.getName());
@@ -166,7 +161,9 @@ public final class ProcessUtils {
 
         if (filters.get(Constants.GENRE_FILTER) != null) {
             for (String genre : filters.get(Constants.GENRE_FILTER)) {
-                filteredList.removeIf(video -> !video.getGenres().contains(genre));
+                if (genre != null) {
+                    filteredList.removeIf(video -> !video.getGenres().contains(genre));
+                }
             }
         }
         return filteredList;
@@ -178,15 +175,24 @@ public final class ProcessUtils {
         List<String> titles = new ArrayList<>();
 
         mapList.sort((entry1, entry2) -> {
-            if (entry1.getValue().equals(entry2.getValue())) {
-                return entry1.getKey().compareTo(entry2.getKey());
+            switch (sortType) {
+                case Constants.ASC -> {
+                    if (entry1.getValue().equals(entry2.getValue())) {
+                        return entry1.getKey().compareTo(entry2.getKey());
+                    }
+                    return entry1.getValue().compareTo(entry2.getValue());
+                }
+                case Constants.DESC -> {
+                    if (entry1.getValue().equals(entry2.getValue())) {
+                        return entry2.getKey().compareTo(entry1.getKey());
+                    }
+                    return entry2.getValue().compareTo(entry1.getValue());
+                }
+                default -> {
+                    return 0;
+                }
             }
-            return entry1.getValue().compareTo(entry2.getValue());
         });
-
-        if (sortType.equals(Constants.DESC)) {
-            Collections.reverse(mapList);
-        }
 
         for (Map.Entry<String, Double> entry : mapList) {
             titles.add(entry.getKey());

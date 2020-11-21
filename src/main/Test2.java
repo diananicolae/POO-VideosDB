@@ -10,7 +10,7 @@ import java.io.IOException;
 
 public class Test2 {
     public static void main(String[] args) throws IOException {
-        InputLoader inputLoader = new InputLoader("test_db/test_files/single_query_favorite_movie.json");
+        InputLoader inputLoader = new InputLoader("test_db/test_files/large_test_no_8.json");
         Input input = inputLoader.readData();
 
         Writer fileWriter = new Writer("result/test");

@@ -5,6 +5,8 @@ import entertainment.Serial;
 import entertainment.Video;
 import user.User;
 
+import java.util.Map;
+
 public final class Commands {
     private Commands() {
     }
@@ -65,9 +67,13 @@ public final class Commands {
         User user = ProcessUtils.getUserInstance(username, ProcessData.users);
         Serial serial = ProcessUtils.getSerialInstance(title, ProcessData.serials);
 
-        if (user.getRatedMovies().containsKey(serial.getTitle())
-                && user.getRatedMovies().get(serial.getTitle()).equals(season)) {
-            return "error -> " + serial.getTitle() + " has been already rated";
+        if (user.getRatedMovies().containsKey(serial.getTitle())) {
+            for(Map.Entry<String, Integer> entry : user.getRatedMovies().entrySet()) {
+                if (entry.getKey().equals(serial.getTitle())
+                        && entry.getValue().equals(season)) {
+                    return "error -> " + serial.getTitle() + " has been already rated";
+                }
+            }
         }
         if (user.getHistory().containsKey(serial.getTitle())) {
             serial.getSeasons().get(season - 1).getRatings().add(rating);

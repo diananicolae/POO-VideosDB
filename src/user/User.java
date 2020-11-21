@@ -21,9 +21,6 @@ public final class User {
         this.ratedMovies = new HashMap<>();
     }
 
-    public User() {
-    }
-
     public String getUsername() {
         return username;
     }

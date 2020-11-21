@@ -44,6 +44,7 @@ public final class ProcessData {
     public void processActions(final JSONArray arrayResult, final Writer fileWriter)
             throws IOException {
         for (ActionInputData action : input.getCommands()) {
+            message = "";
             if (action.getActionType().equals(Constants.COMMAND)) {
                 switch (action.getType()) {
                     case Constants.FAVORITE -> {
@@ -121,6 +122,9 @@ public final class ProcessData {
 
                     }
                 }
+            }
+            if (action.getActionType().equals(Constants.RECOMMENDATION)) {
+
             }
             JSONObject object = fileWriter.writeFile(action.getActionId(), "", message);
             arrayResult.add(object);

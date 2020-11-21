@@ -40,7 +40,11 @@ public final class Actor {
     }
 
     public int getAwardsNumber() {
-        return awards.size();
+        int awardsNumber = 0;
+        for (Integer awards : getAwards().values()) {
+            awardsNumber += awards;
+        }
+        return awardsNumber;
     }
     public String getCareerDescription() {
         return careerDescription;
