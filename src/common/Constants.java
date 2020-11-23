@@ -12,6 +12,7 @@ public final class Constants {
     public static final String DATABASE = "database";
     public static final String ACTORS = "actors";
     public static final String MOVIES = "movies";
+    public static final String VIDEOS = "videos";
     public static final String USERS = "users";
     public static final String NAME = "name";
     public static final String USERNAME = "username";
@@ -63,11 +64,16 @@ public final class Constants {
     public static final String VIEW = "view";
     public static final String RATING = "rating";
     public static final String RECOMMENDATION = "recommendation";
-    public static final String VIDEOS = "videos";
+    public static final String STANDARD = "standard";
+    public static final String PREMIUM = "PREMIUM";
+    public static final String BEST_UNSEEN = "best_unseen";
+    public static final String POPULAR = "popular";
+    public static final String SEARCH = "search";
     public static final int YEAR_FILTER = 0;
     public static final int GENRE_FILTER = 1;
     public static final int WORDS_FILTER = 2;
     public static final int AWARDS_FILTER = 3;
+    public static final int FIRST_VIDEO = 1;
 
 
 

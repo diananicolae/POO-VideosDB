@@ -16,6 +16,9 @@ public final class Queries {
     private Queries() {
     }
 
+    /**
+     * Number of current season
+     */
     public static String actorAverage(final int number, final String sortType) {
         Map<String, Double> averageMap = new HashMap<>();
 
@@ -43,10 +46,14 @@ public final class Queries {
         if (averageMap.isEmpty()) {
             return "Query result: []";
         }
-        List<String> actorNames = ProcessUtils.getListFromMap(averageMap, sortType, number);
+        List<String> actorNames = ProcessUtils.getListFromMap(averageMap,
+                sortType, number);
         return "Query result: " + actorNames;
     }
 
+    /**
+     * Number of current season
+     */
     public static String actorAwards(final String sortType,
                                      final List<List<String>> filters) {
         List<Actor> actors = ProcessUtils.getFilteredActors(filters);
@@ -72,7 +79,9 @@ public final class Queries {
         return ProcessUtils.getActorsList(actors);
     }
 
-
+    /**
+     * Number of current season
+     */
     public static String actorDescription(final String sortType,
                                           final List<List<String>> filters) {
         List<Actor> actors = ProcessUtils.getFilteredActors(filters);
@@ -83,7 +92,9 @@ public final class Queries {
         return ProcessUtils.getActorsList(actors);
     }
 
-
+    /**
+     * Number of current season
+     */
     public static String videoRatings(final int number, final String sortType,
                                       final List<List<String>> filters, final String objectType) {
         List<Video> videos = ProcessUtils.getFilteredVideos(filters, objectType);
@@ -107,31 +118,20 @@ public final class Queries {
         return "Query result: " + videoTitles;
     }
 
+    /**
+     * Number of current season
+     */
     public static String favoriteVideos(final int number, final String sortType,
                                         final List<List<String>> filters,
                                         final String objectType) {
         List<Video> videos = ProcessUtils.getFilteredVideos(filters, objectType);
-        Map<String, Double> favoriteMap = new HashMap<>();
-
-        for (Video video : videos) {
-            double favoriteCount = 0;
-            for (User user : ProcessData.users) {
-                if (user.getFavoriteMovies().contains(video.getTitle())) {
-                    favoriteCount++;
-                }
-            }
-            if (favoriteCount != 0) {
-                favoriteMap.put(video.getTitle(), favoriteCount);
-            }
-        }
-
-        if (favoriteMap.isEmpty()) {
-            return "Query result: []";
-        }
-        List<String> videoTitles = ProcessUtils.getListFromMap(favoriteMap, sortType, number);
+        List<String> videoTitles = ProcessUtils.getFavoriteVideos(videos, sortType, number);
         return "Query result: " + videoTitles;
     }
 
+    /**
+     * Number of current season
+     */
     public static String longestVideos(final int number, final String sortType,
                                        final List<List<String>> filters,
                                        final String objectType) {
@@ -150,23 +150,14 @@ public final class Queries {
 
     }
 
+    /**
+     * Number of current season
+     */
     public static String mostViewedVideos(final int number, final String sortType,
                                           final List<List<String>> filters,
                                           final String objectType) {
         List<Video> videos = ProcessUtils.getFilteredVideos(filters, objectType);
-        Map<String, Double> viewsMap = new HashMap<>();
-
-        for (Video video : videos) {
-            double noViews = 0;
-            for (User user : ProcessData.users) {
-                if (user.getHistory().containsKey(video.getTitle())) {
-                    noViews += user.getHistory().get(video.getTitle());
-                }
-            }
-            if (noViews > 0) {
-                viewsMap.put(video.getTitle(), noViews);
-            }
-        }
+        Map<String, Double> viewsMap = ProcessUtils.getViewsMap(videos);
 
         if (viewsMap.isEmpty()) {
             return "Query result: []";
@@ -176,6 +167,9 @@ public final class Queries {
 
     }
 
+    /**
+     * Number of current season
+     */
     public static String mostActiveUsers(final int number, final String sortType) {
         Map<String, Double> usersMap = new HashMap<>();
 
@@ -190,7 +184,5 @@ public final class Queries {
         }
         List<String> usernames = ProcessUtils.getListFromMap(usersMap, sortType, number);
         return "Query result: " + usernames;
-
     }
-
 }

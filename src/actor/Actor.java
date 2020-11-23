@@ -8,7 +8,6 @@ public final class Actor {
     private String careerDescription;
     private ArrayList<String> filmography;
     private Map<ActorsAwards, Integer> awards;
-    private int average;
 
     public Actor(final String name, final String careerDescription,
                  final ArrayList<String> filmography,
@@ -39,6 +38,9 @@ public final class Actor {
         return awards;
     }
 
+    /**
+     * Number of current season
+     */
     public int getAwardsNumber() {
         int awardsNumber = 0;
         for (Integer awards : getAwards().values()) {
@@ -46,6 +48,7 @@ public final class Actor {
         }
         return awardsNumber;
     }
+
     public String getCareerDescription() {
         return careerDescription;
     }

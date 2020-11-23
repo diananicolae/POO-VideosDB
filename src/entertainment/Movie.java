@@ -15,6 +15,9 @@ public final class Movie extends Video {
         this.ratings = new ArrayList<>();
     }
 
+    /**
+     * Number of current season
+     */
     public Double averageRating() {
         if (ratings.isEmpty()) {
             return null;

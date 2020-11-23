@@ -19,10 +19,6 @@ import java.util.List;
 public final class ProcessData {
     private final Input input;
     private String message;
-    private User user;
-    private Video video;
-    private Movie movie;
-    private Serial serial;
 
     public static List<Actor> actors;
     public static List<User> users;
@@ -41,6 +37,9 @@ public final class ProcessData {
         videos.addAll(serials);
     }
 
+    /**
+     * Number of current season
+     */
     public void processActions(final JSONArray arrayResult, final Writer fileWriter)
             throws IOException {
         for (ActionInputData action : input.getCommands()) {
@@ -124,7 +123,27 @@ public final class ProcessData {
                 }
             }
             if (action.getActionType().equals(Constants.RECOMMENDATION)) {
+                switch (action.getType()) {
+                    case Constants.STANDARD -> {
+                        message = Recommendations.standardRecommendation(action.getUsername());
+                    }
+                    case Constants.BEST_UNSEEN -> {
+                        message = Recommendations.bestUnseenRecommendation(action.getUsername());
+                    }
+                    case Constants.POPULAR -> {
+                        message = Recommendations.popularRecommendation(action.getUsername());
+                    }
+                    case Constants.FAVORITE -> {
+                        message = Recommendations.favoriteRecommendation(action.getUsername());
+                    }
+                    case Constants.SEARCH -> {
+                        message = Recommendations.searchRecommendation(action.getUsername(),
+                                action.getGenre());
+                    }
+                    default -> {
 
+                    }
+                }
             }
             JSONObject object = fileWriter.writeFile(action.getActionId(), "", message);
             arrayResult.add(object);

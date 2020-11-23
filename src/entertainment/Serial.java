@@ -18,6 +18,9 @@ public final class Serial extends Video {
     public Serial() {
     }
 
+    /**
+     * Number of current season
+     */
     public Double averageRating() {
         Double rating = 0.0;
         int unratedSeasons = 0;
@@ -38,6 +41,9 @@ public final class Serial extends Video {
         return rating;
     }
 
+    /**
+     * Number of current season
+     */
     public int getDuration() {
         int duration = 0;
         for (Season season : seasons) {

@@ -11,6 +11,9 @@ public final class Commands {
     private Commands() {
     }
 
+    /**
+     * Number of current season
+     */
     public static String favorite(final String username, final String title) {
         User user = ProcessUtils.getUserInstance(username, ProcessData.users);
         Video video = ProcessUtils.getVideoInstance(title, ProcessData.videos);
@@ -28,6 +31,9 @@ public final class Commands {
         }
     }
 
+    /**
+     * Number of current season
+     */
     public static String view(final String username, final String title) {
         User user = ProcessUtils.getUserInstance(username, ProcessData.users);
         Video video = ProcessUtils.getVideoInstance(title, ProcessData.videos);
@@ -45,6 +51,9 @@ public final class Commands {
                 + " was viewed with total views of " + noViews;
     }
 
+    /**
+     * Number of current season
+     */
     public static String rating(final String username, final String title, final Double rating) {
         User user = ProcessUtils.getUserInstance(username, ProcessData.users);
         Movie movie = ProcessUtils.getMovieInstance(title, ProcessData.movies);
@@ -62,13 +71,16 @@ public final class Commands {
         }
     }
 
+    /**
+     * Number of current season
+     */
     public static String rating(final String username, final String title,
                                 final Integer season, final Double rating) {
         User user = ProcessUtils.getUserInstance(username, ProcessData.users);
         Serial serial = ProcessUtils.getSerialInstance(title, ProcessData.serials);
 
         if (user.getRatedMovies().containsKey(serial.getTitle())) {
-            for(Map.Entry<String, Integer> entry : user.getRatedMovies().entrySet()) {
+            for (Map.Entry<String, Integer> entry : user.getRatedMovies().entrySet()) {
                 if (entry.getKey().equals(serial.getTitle())
                         && entry.getValue().equals(season)) {
                     return "error -> " + serial.getTitle() + " has been already rated";
