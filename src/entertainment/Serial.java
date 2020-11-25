@@ -19,10 +19,10 @@ public final class Serial extends Video {
     }
 
     /**
-     * Number of current season
+     * Return serial rating
      */
     public Double averageRating() {
-        Double rating = 0.0;
+        double rating = 0.0;
         int unratedSeasons = 0;
 
         for (Season season : seasons) {
@@ -42,7 +42,7 @@ public final class Serial extends Video {
     }
 
     /**
-     * Number of current season
+     * Return total duration of serial
      */
     public int getDuration() {
         int duration = 0;
@@ -58,16 +58,5 @@ public final class Serial extends Video {
 
     public ArrayList<Season> getSeasons() {
         return seasons;
-    }
-
-    @Override
-    public String toString() {
-        return "Serial{" + " title= "
-                + super.getTitle() + " " + " year= "
-                + super.getYear() + " cast {"
-                + super.getCast() + " }\n" + " genres {"
-                + super.getGenres() + " }\n "
-                + " numberSeason= " + numberOfSeasons
-                + ", seasons=" + seasons + "\n\n" + '}';
     }
 }

@@ -16,15 +16,15 @@ public final class Movie extends Video {
     }
 
     /**
-     * Number of current season
+     * Return movie rating
      */
     public Double averageRating() {
         if (ratings.isEmpty()) {
             return null;
         }
 
-        Double rating = 0.0;
-        for (Double movieRating : ratings) {
+        double rating = 0.0;
+        for (double movieRating : ratings) {
             rating += movieRating;
         }
         rating /= ratings.size();
@@ -41,15 +41,5 @@ public final class Movie extends Video {
 
     public void setRatings(final List<Double> ratings) {
         this.ratings = ratings;
-    }
-
-    @Override
-    public String toString() {
-        return "Movie{" + "title= "
-                + super.getTitle() + "year= "
-                + super.getYear() + "duration= "
-                + duration + "cast {"
-                + super.getCast() + " }\n"
-                + "genres {" + super.getGenres() + " }\n ";
     }
 }

@@ -162,8 +162,8 @@ public final class Queries {
         Map<String, Double> usersMap = new HashMap<>();
 
         for (User user : database.usersDB()) {
-            if (!user.getRatedMovies().isEmpty()) {
-                usersMap.put(user.getUsername(), (double) user.getRatedMovies().size());
+            if (!user.getRatedVideos().isEmpty()) {
+                usersMap.put(user.getUsername(), (double) user.getRatedVideos().size());
             }
         }
 

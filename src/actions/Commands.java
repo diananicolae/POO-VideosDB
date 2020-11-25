@@ -61,42 +61,42 @@ public final class Commands {
      */
     public String rating(final ActionInputData action) {
         User user = ProcessUtils.getUserInstance(action.getUsername(), database.usersDB());
+        Video video = ProcessUtils.getVideoInstance(action.getTitle(), database.videosDB());
 
+        if (!user.getHistory().containsKey(video.getTitle())) {
+            return "error -> " + video.getTitle() + " is not seen";
+        }
+        if (user.getRatedVideos().containsKey(video.getTitle())) {
+            for (Map.Entry<String, Integer> entry : user.getRatedVideos().entrySet()) {
+                if (entry.getKey().equals(video.getTitle())
+                        && (entry.getValue().equals(action.getSeasonNumber())
+                        || action.getSeasonNumber() < 0)) {
+                    return "error -> " + video.getTitle() + " has been already rated";
+                }
+            }
+        }
+
+        // give rating to a season
         if (action.getSeasonNumber() != 0) {
             Serial serial = ProcessUtils.getSerialInstance(action.getTitle(),
                     database.serialsDB());
             Season season = serial.getSeasons().get(action.getSeasonNumber() - 1);
 
-            if (user.getRatedMovies().containsKey(serial.getTitle())) {
-                for (Map.Entry<String, Integer> entry : user.getRatedMovies().entrySet()) {
-                    if (entry.getKey().equals(serial.getTitle())
-                            && entry.getValue().equals(action.getSeasonNumber())) {
-                        return "error -> " + serial.getTitle() + " has been already rated";
-                    }
-                }
-            }
-            if (user.getHistory().containsKey(serial.getTitle())) {
-                season.getRatings().add(action.getGrade());
-                user.getRatedMovies().put(serial.getTitle(), action.getSeasonNumber());
-                return "success -> " + serial.getTitle() + " was rated with "
-                        + action.getGrade() + " by " + user.getUsername();
-            } else {
-                return "error -> " + serial.getTitle() + " is not seen";
-            }
-        } else {
-            Movie movie = ProcessUtils.getMovieInstance(action.getTitle(), database.moviesDB());
+            season.getRatings().add(action.getGrade());
+            user.getRatedVideos().put(serial.getTitle(), action.getSeasonNumber());
 
-            if (user.getRatedMovies().containsKey(movie.getTitle())) {
-                return "error -> " + movie.getTitle() + " has been already rated";
-            }
-            if (user.getHistory().containsKey(movie.getTitle())) {
-                movie.getRatings().add(action.getGrade());
-                user.getRatedMovies().put(movie.getTitle(), 0);
-                return "success -> " + movie.getTitle() + " was rated with "
-                        + action.getGrade() + " by " + user.getUsername();
-            } else {
-                return "error -> " + movie.getTitle() + " is not seen";
-            }
+            return "success -> " + serial.getTitle() + " was rated with "
+                    + action.getGrade() + " by " + user.getUsername();
+        } else {
+            // give rating to a movie
+            Movie movie = ProcessUtils.getMovieInstance(action.getTitle(), database.moviesDB());
+            movie.getRatings().add(action.getGrade());
+            user.getRatedVideos().put(movie.getTitle(), 0);
+
+            return "success -> " + movie.getTitle() + " was rated with "
+                    + action.getGrade() + " by " + user.getUsername();
         }
+
+
     }
 }

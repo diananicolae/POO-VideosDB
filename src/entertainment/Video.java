@@ -5,7 +5,6 @@ import java.util.ArrayList;
 public abstract class Video {
     private String title;
     private int year;
-    private Double rating;
     private ArrayList<String> cast;
     private ArrayList<String> genres;
 
@@ -21,12 +20,12 @@ public abstract class Video {
     }
 
     /**
-     * Number of current season
+     * Return video rating
      */
     public abstract Double averageRating();
 
     /**
-     * Number of current season
+     * Return video duration
      */
     public abstract int getDuration();
 

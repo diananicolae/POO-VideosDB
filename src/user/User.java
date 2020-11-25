@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public final class User {
-    private String username;
-    private String subscription;
+    private final String username;
+    private final String subscription;
     private Map<String, Integer> history;
     private ArrayList<String> favoriteMovies;
     private Map<String, Integer> ratedMovies;
@@ -37,7 +37,7 @@ public final class User {
         return favoriteMovies;
     }
 
-    public Map<String, Integer> getRatedMovies() {
+    public Map<String, Integer> getRatedVideos() {
         return ratedMovies;
     }
 
