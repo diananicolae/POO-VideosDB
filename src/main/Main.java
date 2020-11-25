@@ -1,5 +1,6 @@
 package main;
 
+import actions.Database;
 import actions.ProcessData;
 import checker.Checker;
 import checker.Checkstyle;
@@ -72,9 +73,10 @@ public final class Main {
         Writer fileWriter = new Writer(filePath2);
         JSONArray arrayResult = new JSONArray();
 
-        //TODO add here the entry point to your implementation
-        ProcessData data = new ProcessData(input);
-        data.processActions(arrayResult, fileWriter);
+        Database database = new Database(input);
+        ProcessData data = new ProcessData(database);
+        data.process(arrayResult, fileWriter);
+
         fileWriter.closeJSON(arrayResult);
     }
 }

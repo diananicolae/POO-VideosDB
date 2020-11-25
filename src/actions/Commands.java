@@ -1,22 +1,27 @@
 package actions;
 
 import entertainment.Movie;
+import entertainment.Season;
 import entertainment.Serial;
 import entertainment.Video;
+import fileio.ActionInputData;
 import user.User;
 
 import java.util.Map;
 
 public final class Commands {
-    private Commands() {
+    private final Database database;
+
+    public Commands(final Database database) {
+        this.database = database;
     }
 
     /**
-     * Number of current season
+     * Adds video to user's favorites list, if it is already seen
      */
-    public static String favorite(final String username, final String title) {
-        User user = ProcessUtils.getUserInstance(username, ProcessData.users);
-        Video video = ProcessUtils.getVideoInstance(title, ProcessData.videos);
+    public String favorite(final ActionInputData action) {
+        User user = ProcessUtils.getUserInstance(action.getUsername(), database.usersDB());
+        Video video = ProcessUtils.getVideoInstance(action.getTitle(), database.videosDB());
 
         if (user.getFavoriteMovies().contains(video.getTitle())) {
             return "error -> " + video.getTitle()
@@ -32,11 +37,11 @@ public final class Commands {
     }
 
     /**
-     * Number of current season
+     * Marks video as viewed by adding it to user's history
      */
-    public static String view(final String username, final String title) {
-        User user = ProcessUtils.getUserInstance(username, ProcessData.users);
-        Video video = ProcessUtils.getVideoInstance(title, ProcessData.videos);
+    public String view(final ActionInputData action) {
+        User user = ProcessUtils.getUserInstance(action.getUsername(), database.usersDB());
+        Video video = ProcessUtils.getVideoInstance(action.getTitle(), database.videosDB());
 
         int noViews;
         if (user.getHistory().containsKey(video.getTitle())) {
@@ -52,48 +57,46 @@ public final class Commands {
     }
 
     /**
-     * Number of current season
+     * Gives rating to an already watched video
      */
-    public static String rating(final String username, final String title, final Double rating) {
-        User user = ProcessUtils.getUserInstance(username, ProcessData.users);
-        Movie movie = ProcessUtils.getMovieInstance(title, ProcessData.movies);
+    public String rating(final ActionInputData action) {
+        User user = ProcessUtils.getUserInstance(action.getUsername(), database.usersDB());
 
-        if (user.getRatedMovies().containsKey(movie.getTitle())) {
-            return "error -> " + movie.getTitle() + " has been already rated";
-        }
-        if (user.getHistory().containsKey(movie.getTitle())) {
-            movie.getRatings().add(rating);
-            user.getRatedMovies().put(movie.getTitle(), 0);
-            return "success -> " + movie.getTitle() + " was rated with "
-                    + rating + " by " + user.getUsername();
-        } else {
-            return "error -> " + movie.getTitle() + " is not seen";
-        }
-    }
+        if (action.getSeasonNumber() != 0) {
+            Serial serial = ProcessUtils.getSerialInstance(action.getTitle(),
+                    database.serialsDB());
+            Season season = serial.getSeasons().get(action.getSeasonNumber() - 1);
 
-    /**
-     * Number of current season
-     */
-    public static String rating(final String username, final String title,
-                                final Integer season, final Double rating) {
-        User user = ProcessUtils.getUserInstance(username, ProcessData.users);
-        Serial serial = ProcessUtils.getSerialInstance(title, ProcessData.serials);
-
-        if (user.getRatedMovies().containsKey(serial.getTitle())) {
-            for (Map.Entry<String, Integer> entry : user.getRatedMovies().entrySet()) {
-                if (entry.getKey().equals(serial.getTitle())
-                        && entry.getValue().equals(season)) {
-                    return "error -> " + serial.getTitle() + " has been already rated";
+            if (user.getRatedMovies().containsKey(serial.getTitle())) {
+                for (Map.Entry<String, Integer> entry : user.getRatedMovies().entrySet()) {
+                    if (entry.getKey().equals(serial.getTitle())
+                            && entry.getValue().equals(action.getSeasonNumber())) {
+                        return "error -> " + serial.getTitle() + " has been already rated";
+                    }
                 }
             }
-        }
-        if (user.getHistory().containsKey(serial.getTitle())) {
-            serial.getSeasons().get(season - 1).getRatings().add(rating);
-            user.getRatedMovies().put(serial.getTitle(), season);
-            return "success -> " + serial.getTitle() + " was rated with "
-                    + rating + " by " + user.getUsername();
+            if (user.getHistory().containsKey(serial.getTitle())) {
+                season.getRatings().add(action.getGrade());
+                user.getRatedMovies().put(serial.getTitle(), action.getSeasonNumber());
+                return "success -> " + serial.getTitle() + " was rated with "
+                        + action.getGrade() + " by " + user.getUsername();
+            } else {
+                return "error -> " + serial.getTitle() + " is not seen";
+            }
         } else {
-            return "error -> " + serial.getTitle() + " is not seen";
+            Movie movie = ProcessUtils.getMovieInstance(action.getTitle(), database.moviesDB());
+
+            if (user.getRatedMovies().containsKey(movie.getTitle())) {
+                return "error -> " + movie.getTitle() + " has been already rated";
+            }
+            if (user.getHistory().containsKey(movie.getTitle())) {
+                movie.getRatings().add(action.getGrade());
+                user.getRatedMovies().put(movie.getTitle(), 0);
+                return "success -> " + movie.getTitle() + " was rated with "
+                        + action.getGrade() + " by " + user.getUsername();
+            } else {
+                return "error -> " + movie.getTitle() + " is not seen";
+            }
         }
     }
 }

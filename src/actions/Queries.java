@@ -3,39 +3,40 @@ package actions;
 import actor.Actor;
 import common.Constants;
 import entertainment.Video;
+import fileio.ActionInputData;
 import user.User;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public final class Queries {
-    private Queries() {
+    private final Database database;
+
+    public Queries(final Database database) {
+        this.database = database;
     }
 
     /**
-     * Number of current season
+     * Returns list of actors sorted by the average rating
+     * of their filmography
      */
-    public static String actorAverage(final int number, final String sortType) {
+    public String actorAverage(final ActionInputData action) {
+        // map entries are <actorName, actorAverage>
         Map<String, Double> averageMap = new HashMap<>();
 
-        for (Actor actor : ProcessData.actors) {
+        // determine the average of every actor in the database
+        for (Actor actor : database.actorsDB()) {
             double actorAverage = 0.0;
             int ratedFilms = 0;
 
             for (String film : actor.getFilmography()) {
-                if (ProcessUtils.getVideoInstance(film, ProcessData.videos) == null
-                        || ProcessUtils.getVideoInstance(film, ProcessData.videos).
-                        averageRating() == null) {
+                Video video = ProcessUtils.getVideoInstance(film, database.videosDB());
+                if (video == null || video.averageRating() == null) {
                     continue;
                 }
-                actorAverage += ProcessUtils.getVideoInstance(film,
-                        ProcessData.videos).averageRating();
+                actorAverage += video.averageRating();
                 ratedFilms++;
             }
+            // skip the actor if no video from the filmography is rated
             if (ratedFilms == 0) {
                 continue;
             }
@@ -43,22 +44,21 @@ public final class Queries {
             averageMap.put(actor.getName(), actorAverage);
         }
 
-        if (averageMap.isEmpty()) {
-            return "Query result: []";
-        }
         List<String> actorNames = ProcessUtils.getListFromMap(averageMap,
-                sortType, number);
+                action.getSortType(), action.getNumber());
         return "Query result: " + actorNames;
     }
 
     /**
-     * Number of current season
+     * Returns list of actors filtered by wanted awards and
+     * sorted by the total number of awards
      */
-    public static String actorAwards(final String sortType,
-                                     final List<List<String>> filters) {
-        List<Actor> actors = ProcessUtils.getFilteredActors(filters);
+    public String actorAwards(final ActionInputData action) {
+        List<Actor> actors = ProcessUtils.getFilteredActors(action.getFilters(),
+                database);
+
         actors.sort((actor1, actor2) -> {
-            switch (sortType) {
+            switch (action.getSortType()) {
                 case Constants.ASC -> {
                     if (actor1.getAwardsNumber() == actor2.getAwardsNumber()) {
                         return actor1.getName().compareTo(actor2.getName());
@@ -80,109 +80,95 @@ public final class Queries {
     }
 
     /**
-     * Number of current season
+     * Returns list of actors filtered by wanted words and
+     * sorted alphabetically
      */
-    public static String actorDescription(final String sortType,
-                                          final List<List<String>> filters) {
-        List<Actor> actors = ProcessUtils.getFilteredActors(filters);
+    public String actorDescription(final ActionInputData action) {
+        List<Actor> actors = ProcessUtils.getFilteredActors(action.getFilters(),
+                database);
         actors.sort(Comparator.comparing(Actor::getName));
-        if (sortType.equals(Constants.DESC)) {
+        if (action.getSortType().equals(Constants.DESC)) {
             Collections.reverse(actors);
         }
         return ProcessUtils.getActorsList(actors);
     }
 
     /**
-     * Number of current season
+     * Returns titles list of videos sorted by rating
      */
-    public static String videoRatings(final int number, final String sortType,
-                                      final List<List<String>> filters, final String objectType) {
-        List<Video> videos = ProcessUtils.getFilteredVideos(filters, objectType);
+    public String videoRatings(final ActionInputData action) {
+        List<Video> videos = ProcessUtils.getFilteredVideos(action.getFilters(),
+                action.getObjectType(), database);
         videos.removeIf(video -> video.averageRating() == null);
-        videos.sort(Comparator.comparingDouble(Video::averageRating));
+        Map<String, Double> ratingMap = new HashMap<>();
 
-        if (videos.isEmpty()) {
-            return "Query result: []";
-        }
-        if (sortType.equals(Constants.DESC)) {
-            Collections.reverse(videos);
-        }
-
-        List<String> videoTitles = new ArrayList<>();
         for (Video video : videos) {
-            videoTitles.add(video.getTitle());
+            ratingMap.put(video.getTitle(), video.averageRating());
         }
-        if (number < videoTitles.size()) {
-            videoTitles = videoTitles.subList(0, number);
-        }
+        List<String> videoTitles = ProcessUtils.getListFromMap(ratingMap,
+                action.getSortType(), action.getNumber());
+        return "Query result: " + videoTitles;
+
+    }
+
+    /**
+     * Returns titles list of videos sorted by the number of appearances
+     * in users' favorite videos
+     */
+    public String favoriteVideos(final ActionInputData action) {
+        List<Video> videos = ProcessUtils.getFilteredVideos(action.getFilters(),
+                action.getObjectType(), database);
+        List<String> videoTitles = ProcessUtils.getFavoriteVideos(videos,
+                action.getSortType(), action.getNumber(), database);
         return "Query result: " + videoTitles;
     }
 
     /**
-     * Number of current season
+     * Returns titles list of videos sorted by duration
      */
-    public static String favoriteVideos(final int number, final String sortType,
-                                        final List<List<String>> filters,
-                                        final String objectType) {
-        List<Video> videos = ProcessUtils.getFilteredVideos(filters, objectType);
-        List<String> videoTitles = ProcessUtils.getFavoriteVideos(videos, sortType, number);
-        return "Query result: " + videoTitles;
-    }
-
-    /**
-     * Number of current season
-     */
-    public static String longestVideos(final int number, final String sortType,
-                                       final List<List<String>> filters,
-                                       final String objectType) {
-        List<Video> videos = ProcessUtils.getFilteredVideos(filters, objectType);
+    public String longestVideos(final ActionInputData action) {
+        List<Video> videos = ProcessUtils.getFilteredVideos(action.getFilters(),
+                action.getObjectType(), database);
         Map<String, Double> durationMap = new HashMap<>();
 
         for (Video video : videos) {
             durationMap.put(video.getTitle(), (double) video.getDuration());
         }
-
-        if (durationMap.isEmpty()) {
-            return "Query result: []";
-        }
-        List<String> videoTitles = ProcessUtils.getListFromMap(durationMap, sortType, number);
+        List<String> videoTitles = ProcessUtils.getListFromMap(durationMap,
+                action.getSortType(), action.getNumber());
         return "Query result: " + videoTitles;
 
     }
 
     /**
-     * Number of current season
+     * Returns titles list of videos sorted by number of views
      */
-    public static String mostViewedVideos(final int number, final String sortType,
-                                          final List<List<String>> filters,
-                                          final String objectType) {
-        List<Video> videos = ProcessUtils.getFilteredVideos(filters, objectType);
-        Map<String, Double> viewsMap = ProcessUtils.getViewsMap(videos);
+    public String mostViewedVideos(final ActionInputData action) {
+        List<Video> videos = ProcessUtils.getFilteredVideos(action.getFilters(),
+                action.getObjectType(), database);
+        Map<String, Double> viewsMap = ProcessUtils.getViewsMap(videos, database);
 
-        if (viewsMap.isEmpty()) {
-            return "Query result: []";
-        }
-        List<String> videoTitles = ProcessUtils.getListFromMap(viewsMap, sortType, number);
+        List<String> videoTitles = ProcessUtils.getListFromMap(viewsMap,
+                action.getSortType(), action.getNumber());
         return "Query result: " + videoTitles;
 
     }
 
     /**
-     * Number of current season
+     * Returns usernames list of users sorted by number
+     * of given ratings
      */
-    public static String mostActiveUsers(final int number, final String sortType) {
+    public String mostActiveUsers(final ActionInputData action) {
         Map<String, Double> usersMap = new HashMap<>();
 
-        for (User user : ProcessData.users) {
+        for (User user : database.usersDB()) {
             if (!user.getRatedMovies().isEmpty()) {
                 usersMap.put(user.getUsername(), (double) user.getRatedMovies().size());
             }
         }
 
-        if (usersMap.isEmpty()) {
-            return "Query result: []";
-        }
-        List<String> usernames = ProcessUtils.getListFromMap(usersMap, sortType, number);
+        List<String> usernames = ProcessUtils.getListFromMap(usersMap,
+                action.getSortType(), action.getNumber());
         return "Query result: " + usernames;
     }
 }

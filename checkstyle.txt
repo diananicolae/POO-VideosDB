@@ -1,10 +1,5 @@
 Starting audit...
-[ERROR] C:\Users\Diana\IdeaProjects\POO-VideosDB\.\src\actions\ProcessData.java:23:31: Variable 'actors' must be private and have accessor methods. [VisibilityModifier]
-[ERROR] C:\Users\Diana\IdeaProjects\POO-VideosDB\.\src\actions\ProcessData.java:24:30: Variable 'users' must be private and have accessor methods. [VisibilityModifier]
-[ERROR] C:\Users\Diana\IdeaProjects\POO-VideosDB\.\src\actions\ProcessData.java:25:32: Variable 'serials' must be private and have accessor methods. [VisibilityModifier]
-[ERROR] C:\Users\Diana\IdeaProjects\POO-VideosDB\.\src\actions\ProcessData.java:26:31: Variable 'videos' must be private and have accessor methods. [VisibilityModifier]
-[ERROR] C:\Users\Diana\IdeaProjects\POO-VideosDB\.\src\actions\ProcessData.java:27:31: Variable 'movies' must be private and have accessor methods. [VisibilityModifier]
 [ERROR] C:\Users\Diana\IdeaProjects\POO-VideosDB\.\src\actions\ProcessUtils.java:15:17: Using the '.*' form of import should be avoided - java.util.*. [AvoidStarImport]
-[ERROR] C:\Users\Diana\IdeaProjects\POO-VideosDB\.\src\actor\Actor.java:46:22: 'awards' hides a field. [HiddenField]
+[ERROR] C:\Users\Diana\IdeaProjects\POO-VideosDB\.\src\actions\Queries.java:9:17: Using the '.*' form of import should be avoided - java.util.*. [AvoidStarImport]
 Audit done.
-Checkstyle ends with 7 errors.
+Checkstyle ends with 2 errors.

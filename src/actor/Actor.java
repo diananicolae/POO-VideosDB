@@ -42,11 +42,11 @@ public final class Actor {
      * Number of current season
      */
     public int getAwardsNumber() {
-        int awardsNumber = 0;
-        for (Integer awards : getAwards().values()) {
-            awardsNumber += awards;
+        int totalAwards = 0;
+        for (Integer noAwards : getAwards().values()) {
+            totalAwards += noAwards;
         }
-        return awardsNumber;
+        return totalAwards;
     }
 
     public String getCareerDescription() {

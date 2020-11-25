@@ -1,65 +1,44 @@
 package actions;
 
-import actor.Actor;
 import common.Constants;
-import entertainment.Movie;
-import entertainment.Serial;
-import entertainment.Video;
 import fileio.ActionInputData;
-import fileio.Input;
 import fileio.Writer;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import user.User;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public final class ProcessData {
-    private final Input input;
-    private String message;
+    private final Database database;
+    private final Commands commands;
+    private final Queries queries;
+    private final Recommendations recommendations;
 
-    public static List<Actor> actors;
-    public static List<User> users;
-    public static List<Serial> serials;
-    public static List<Video> videos;
-    public static List<Movie> movies;
-
-    public ProcessData(final Input input) {
-        this.input = input;
-        actors = ProcessUtils.transformActorInput(input.getActors());
-        users = ProcessUtils.transformUserInput(input.getUsers());
-        movies = ProcessUtils.transformMovieInput(input.getMovies());
-        serials = ProcessUtils.transformSerialInput(input.getSerials());
-        videos = new ArrayList<>();
-        videos.addAll(movies);
-        videos.addAll(serials);
+    public ProcessData(final Database database) {
+        this.database = database;
+        this.commands = new Commands(database);
+        this.queries = new Queries(database);
+        this.recommendations = new Recommendations(database);
     }
 
     /**
      * Number of current season
      */
-    public void processActions(final JSONArray arrayResult, final Writer fileWriter)
+    public void process(final JSONArray arrayResult, final Writer fileWriter)
             throws IOException {
-        for (ActionInputData action : input.getCommands()) {
-            message = "";
+        for (ActionInputData action : database.commandsDB()) {
+            String message = "";
+            String field = "";
             if (action.getActionType().equals(Constants.COMMAND)) {
                 switch (action.getType()) {
                     case Constants.FAVORITE -> {
-                        message = Commands.favorite(action.getUsername(), action.getTitle());
+                        message = commands.favorite(action);
                     }
                     case Constants.VIEW -> {
-                        message = Commands.view(action.getUsername(), action.getTitle());
+                        message = commands.view(action);
                     }
                     case Constants.RATING -> {
-                        if (action.getSeasonNumber() > 0) {
-                            message = Commands.rating(action.getUsername(), action.getTitle(),
-                                    action.getSeasonNumber(), action.getGrade());
-                        } else {
-                            message = Commands.rating(action.getUsername(), action.getTitle(),
-                                    action.getGrade());
-                        }
+                        message = commands.rating(action);
                     }
                     default -> {
                     }
@@ -70,16 +49,13 @@ public final class ProcessData {
                     case Constants.ACTORS -> {
                         switch (action.getCriteria()) {
                             case Constants.AVERAGE -> {
-                                message = Queries.actorAverage(action.getNumber(),
-                                        action.getSortType());
+                                message = queries.actorAverage(action);
                             }
                             case Constants.AWARDS -> {
-                                message = Queries.actorAwards(action.getSortType(),
-                                        action.getFilters());
+                                message = queries.actorAwards(action);
                             }
                             case Constants.FILTER_DESCRIPTION -> {
-                                message = Queries.actorDescription(action.getSortType(),
-                                        action.getFilters());
+                                message = queries.actorDescription(action);
                             }
                             default -> {
                             }
@@ -88,24 +64,16 @@ public final class ProcessData {
                     case Constants.MOVIES, Constants.SHOWS -> {
                         switch (action.getCriteria()) {
                             case Constants.RATINGS -> {
-                                message = Queries.videoRatings(action.getNumber(),
-                                        action.getSortType(), action.getFilters(),
-                                        action.getObjectType());
+                                message = queries.videoRatings(action);
                             }
                             case Constants.FAVORITE -> {
-                                message = Queries.favoriteVideos(action.getNumber(),
-                                        action.getSortType(), action.getFilters(),
-                                        action.getObjectType());
+                                message = queries.favoriteVideos(action);
                             }
                             case Constants.LONGEST -> {
-                                message = Queries.longestVideos(action.getNumber(),
-                                        action.getSortType(), action.getFilters(),
-                                        action.getObjectType());
+                                message = queries.longestVideos(action);
                             }
                             case Constants.MOST_VIEWED -> {
-                                message = Queries.mostViewedVideos(action.getNumber(),
-                                        action.getSortType(), action.getFilters(),
-                                        action.getObjectType());
+                                message = queries.mostViewedVideos(action);
                             }
                             default -> {
                             }
@@ -113,8 +81,7 @@ public final class ProcessData {
                     }
                     case Constants.USERS -> {
                         if (Constants.NUM_RATINGS.equals(action.getCriteria())) {
-                            message = Queries.mostActiveUsers(action.getNumber(),
-                                    action.getSortType());
+                            message = queries.mostActiveUsers(action);
                         }
                     }
                     default -> {
@@ -125,27 +92,26 @@ public final class ProcessData {
             if (action.getActionType().equals(Constants.RECOMMENDATION)) {
                 switch (action.getType()) {
                     case Constants.STANDARD -> {
-                        message = Recommendations.standardRecommendation(action.getUsername());
+                        message = recommendations.standardRecommendation(action);
                     }
                     case Constants.BEST_UNSEEN -> {
-                        message = Recommendations.bestUnseenRecommendation(action.getUsername());
+                        message = recommendations.bestUnseenRecommendation(action);
                     }
                     case Constants.POPULAR -> {
-                        message = Recommendations.popularRecommendation(action.getUsername());
+                        message = recommendations.popularRecommendation(action);
                     }
                     case Constants.FAVORITE -> {
-                        message = Recommendations.favoriteRecommendation(action.getUsername());
+                        message = recommendations.favoriteRecommendation(action);
                     }
                     case Constants.SEARCH -> {
-                        message = Recommendations.searchRecommendation(action.getUsername(),
-                                action.getGenre());
+                        message = recommendations.searchRecommendation(action);
                     }
                     default -> {
 
                     }
                 }
             }
-            JSONObject object = fileWriter.writeFile(action.getActionId(), "", message);
+            JSONObject object = fileWriter.writeFile(action.getActionId(), field, message);
             arrayResult.add(object);
         }
     }

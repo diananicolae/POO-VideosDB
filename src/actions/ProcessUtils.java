@@ -21,7 +21,7 @@ public final class ProcessUtils {
     }
 
     /**
-     * Number of current season
+     * Uses the string username and returns the User instance from database
      */
     public static User getUserInstance(final String username, final List<User> users) {
         for (User user : users) {
@@ -33,7 +33,7 @@ public final class ProcessUtils {
     }
 
     /**
-     * Number of current season
+     * Uses the string title and returns the Video instance from database
      */
     public static Video getVideoInstance(final String title, final List<Video> videos) {
         for (Video video : videos) {
@@ -45,7 +45,7 @@ public final class ProcessUtils {
     }
 
     /**
-     * Number of current season
+     * Uses the string title and returns the Movie instance from database
      */
     public static Movie getMovieInstance(final String title, final List<Movie> movies) {
         for (Movie movie : movies) {
@@ -57,7 +57,7 @@ public final class ProcessUtils {
     }
 
     /**
-     * Number of current season
+     * Uses the string title and returns the Serial instance from database
      */
     public static Serial getSerialInstance(final String title, final List<Serial> serials) {
         for (Serial serial : serials) {
@@ -69,7 +69,8 @@ public final class ProcessUtils {
     }
 
     /**
-     * Number of current season
+     * Transforms the input objects for the database
+     * UserInputData -> User
      */
     public static List<User> transformUserInput(final List<UserInputData> input) {
         List<User> list = new ArrayList<>();
@@ -82,7 +83,8 @@ public final class ProcessUtils {
     }
 
     /**
-     * Number of current season
+     * Transforms the input objects for the database
+     * ActorInputData -> Actor
      */
     public static List<Actor> transformActorInput(final List<ActorInputData> input) {
         List<Actor> list = new ArrayList<>();
@@ -95,7 +97,8 @@ public final class ProcessUtils {
     }
 
     /**
-     * Number of current season
+     * Transforms the input objects for the database
+     * MovieInputData -> Movie
      */
     public static List<Movie> transformMovieInput(final List<MovieInputData> input) {
         List<Movie> list = new ArrayList<>();
@@ -108,7 +111,8 @@ public final class ProcessUtils {
     }
 
     /**
-     * Number of current season
+     * Transforms the input objects for the database
+     * SerialInputData -> Serial
      */
     public static List<Serial> transformSerialInput(final List<SerialInputData> input) {
         List<Serial> list = new ArrayList<>();
@@ -121,10 +125,12 @@ public final class ProcessUtils {
     }
 
     /**
-     * Number of current season
+     * Filters actors by Career Description and Awards
+     * Removes Actor instance if the filters don't apply
      */
-    public static List<Actor> getFilteredActors(final List<List<String>> filters) {
-        List<Actor> filteredList = new ArrayList<>(ProcessData.actors);
+    public static List<Actor> getFilteredActors(final List<List<String>> filters,
+                                                final Database database) {
+        List<Actor> filteredList = new ArrayList<>(database.actorsDB());
 
         if (filters.get(Constants.WORDS_FILTER) != null) {
             for (String word : filters.get(Constants.WORDS_FILTER)) {
@@ -148,12 +154,9 @@ public final class ProcessUtils {
     }
 
     /**
-     * Number of current season
+     * Transforms list of actors to list of actors names
      */
     public static String getActorsList(final List<Actor> actors) {
-        if (actors.isEmpty()) {
-            return "Query result: []";
-        }
         List<String> actorNames = new ArrayList<>();
         for (Actor actor : actors) {
             actorNames.add(actor.getName());
@@ -162,21 +165,23 @@ public final class ProcessUtils {
     }
 
     /**
-     * Number of current season
+     * Filters videos by Genre and Year
+     * Removes Video instance if the filters don't apply
      */
     public static List<Video> getFilteredVideos(final List<List<String>> filters,
-                                                final String objectType) {
+                                                final String objectType,
+                                                final Database database) {
         List<Video> filteredList = new ArrayList<>();
 
         switch (objectType) {
             case Constants.MOVIES -> {
-                filteredList.addAll(ProcessData.movies);
+                filteredList.addAll(database.moviesDB());
             }
             case Constants.SHOWS -> {
-                filteredList.addAll(ProcessData.serials);
+                filteredList.addAll(database.serialsDB());
             }
             case Constants.VIDEOS -> {
-                filteredList.addAll(ProcessData.videos);
+                filteredList.addAll(database.videosDB());
             }
             default -> {
             }
@@ -201,15 +206,16 @@ public final class ProcessUtils {
     }
 
     /**
-     * Number of current season
+     * Creates map of favorite movies sorted by the number of appearances
+     * in every user's list of favorite videos
      */
     public static List<String> getFavoriteVideos(final List<Video> videos, final String sortType,
-                                                 final int number) {
+                                                 final int number, final Database database) {
         Map<String, Double> favoriteMap = new HashMap<>();
 
         for (Video video : videos) {
             double favoriteCount = 0;
-            for (User user : ProcessData.users) {
+            for (User user : database.usersDB()) {
                 if (user.getFavoriteMovies().contains(video.getTitle())) {
                     favoriteCount++;
                 }
@@ -222,7 +228,7 @@ public final class ProcessUtils {
     }
 
     /**
-     * Number of current season
+     * Transforms map to a sorted list of titles
      */
     public static List<String> getListFromMap(final Map<String, Double> map, final String sortType,
                                               final int number) {
@@ -263,14 +269,16 @@ public final class ProcessUtils {
     }
 
     /**
-     * Number of current season
+     * Creates map of most viewed movies sorted by the number of appearances
+     * in every user's video history
      */
-    public static Map<String, Double> getViewsMap(final List<Video> videos) {
+    public static Map<String, Double> getViewsMap(final List<Video> videos,
+                                                  final Database database) {
         Map<String, Double> viewsMap = new HashMap<>();
 
         for (Video video : videos) {
             double noViews = 0;
-            for (User user : ProcessData.users) {
+            for (User user : database.usersDB()) {
                 if (user.getHistory().containsKey(video.getTitle())) {
                     noViews += user.getHistory().get(video.getTitle());
                 }
@@ -283,11 +291,13 @@ public final class ProcessUtils {
     }
 
     /**
-     * Number of current season
+     * Creates list of most popular genres using the
+     * most viewed videos for sorting
      */
-    public static List<String> genrePopularity(final List<Video> videos) {
+    public static List<String> genrePopularity(final List<Video> videos,
+                                               final Database database) {
         Map<String, Double> genreMap = new HashMap<>();
-        Map<String, Double> viewsMap = getViewsMap(videos);
+        Map<String, Double> viewsMap = getViewsMap(videos, database);
 
         for (Video video : videos) {
             if (!viewsMap.containsKey(video.getTitle())) {
