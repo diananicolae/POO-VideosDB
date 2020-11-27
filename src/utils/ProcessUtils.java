@@ -22,6 +22,8 @@ public final class ProcessUtils {
 
     /**
      * Uses the string username and returns the User instance from database
+     * @param username user we need the instance of
+     * @param users list of users from Database
      */
     public static User getUserInstance(final String username, final List<User> users) {
         for (User user : users) {
@@ -34,6 +36,8 @@ public final class ProcessUtils {
 
     /**
      * Uses the string title and returns the Video instance from database
+     * @param title video we need the instance of
+     * @param videos list of videos from Database
      */
     public static Video getVideoInstance(final String title, final List<Video> videos) {
         for (Video video : videos) {
@@ -46,6 +50,8 @@ public final class ProcessUtils {
 
     /**
      * Uses the string title and returns the Movie instance from database
+     * @param title movie we need the instance of
+     * @param movies list of movies from Database
      */
     public static Movie getMovieInstance(final String title, final List<Movie> movies) {
         for (Movie movie : movies) {
@@ -58,6 +64,8 @@ public final class ProcessUtils {
 
     /**
      * Uses the string title and returns the Serial instance from database
+     * @param title serial we need the instance of
+     * @param serials list of serials from Database
      */
     public static Serial getSerialInstance(final String title, final List<Serial> serials) {
         for (Serial serial : serials) {
@@ -70,7 +78,8 @@ public final class ProcessUtils {
 
     /**
      * Transforms the input objects for the database
-     * UserInputData -> User
+     * @param input list of UserInputData instances
+     * @return final list of users
      */
     public static List<User> transformUserInput(final List<UserInputData> input) {
         List<User> list = new ArrayList<>();
@@ -84,7 +93,8 @@ public final class ProcessUtils {
 
     /**
      * Transforms the input objects for the database
-     * ActorInputData -> Actor
+     * @param input list of ActorInputData instances
+     * @return final list of actors
      */
     public static List<Actor> transformActorInput(final List<ActorInputData> input) {
         List<Actor> list = new ArrayList<>();
@@ -98,7 +108,8 @@ public final class ProcessUtils {
 
     /**
      * Transforms the input objects for the database
-     * MovieInputData -> Movie
+     * @param input list of MovieInputData instances
+     * @return final list of movies
      */
     public static List<Movie> transformMovieInput(final List<MovieInputData> input) {
         List<Movie> list = new ArrayList<>();
@@ -112,7 +123,8 @@ public final class ProcessUtils {
 
     /**
      * Transforms the input objects for the database
-     * SerialInputData -> Serial
+     * @param input list of SerialInputData instances
+     * @return final list of serials
      */
     public static List<Serial> transformSerialInput(final List<SerialInputData> input) {
         List<Serial> list = new ArrayList<>();
@@ -127,6 +139,8 @@ public final class ProcessUtils {
     /**
      * Filters actors by Career Description and Awards
      * Removes Actor instance if the filters don't apply
+     * @param filters list of lists of strings containing filters
+     * @return list of filtered actors
      */
     public static List<Actor> getFilteredActors(final List<List<String>> filters,
                                                 final Database database) {
@@ -170,6 +184,8 @@ public final class ProcessUtils {
     /**
      * Filters videos by Genre and Year
      * Removes Video instance if the filters don't apply
+     * @param filters list of lists of strings containing filters
+     * @return list of filtered videos
      */
     public static List<Video> getFilteredVideos(final List<List<String>> filters,
                                                 final String objectType,
@@ -214,6 +230,9 @@ public final class ProcessUtils {
     /**
      * Creates map of favorite movies sorted by the number of appearances
      * in every user's list of favorite videos
+     * @param sortType the order in which we need to sort
+     * @param number the number of elements to be returned
+     * @return list of video titles
      */
     public static List<String> getFavoriteVideos(final List<Video> videos, final String sortType,
                                                  final int number, final Database database) {
@@ -237,6 +256,9 @@ public final class ProcessUtils {
 
     /**
      * Transforms map to a sorted list of titles
+     * @param sortType the order in which we need to sort
+     * @param number the number of elements to be returned
+     * @return sorted list of video titles / actor names
      */
     public static List<String> getListFromMap(final Map<String, Double> map, final String sortType,
                                               final int number) {
@@ -307,6 +329,7 @@ public final class ProcessUtils {
     /**
      * Creates list of most popular genres using the
      * most viewed videos for sorting
+     * @return list of genres sorted by popularity
      */
     public static List<String> genrePopularity(final List<Video> videos,
                                                final Database database) {

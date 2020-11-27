@@ -28,6 +28,8 @@ public final class ProcessData {
      * Process every action in the database
      * Determines which method should be called
      * using Action Type, Object Type and Criteria
+     * @param arrayResult array to retain objects
+     * @param fileWriter function to create JSONObject
      */
     public void process(final JSONArray arrayResult, final Writer fileWriter)
             throws IOException {

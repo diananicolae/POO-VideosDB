@@ -19,6 +19,8 @@ public final class Commands {
 
     /**
      * Adds video to user's favorites list, if it is already seen
+     * @param action instance of action from input
+     * @return message String result of action
      */
     public String favorite(final ActionInputData action) {
         User user = ProcessUtils.getUserInstance(action.getUsername(), database.usersDB());
@@ -42,6 +44,8 @@ public final class Commands {
 
     /**
      * Marks video as viewed by adding it to user's history
+     * @param action instance of action from input
+     * @return message String result of action
      */
     public String view(final ActionInputData action) {
         User user = ProcessUtils.getUserInstance(action.getUsername(), database.usersDB());
@@ -64,6 +68,8 @@ public final class Commands {
 
     /**
      * Gives rating to an already watched video
+     * @param action instance of action from input
+     * @return message String result of action
      */
     public String rating(final ActionInputData action) {
         User user = ProcessUtils.getUserInstance(action.getUsername(), database.usersDB());

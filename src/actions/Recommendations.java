@@ -18,6 +18,8 @@ public final class Recommendations {
 
     /**
      * Returns first unwatched video from database
+     * @param action instance of action from input
+     * @return message String result of action
      */
     public String standardRecommendation(final ActionInputData action) {
         User user = ProcessUtils.getUserInstance(action.getUsername(), database.usersDB());
@@ -39,6 +41,8 @@ public final class Recommendations {
     /**
      * Returns first unwatched video from database
      * with the highest rating
+     * @param action instance of action from input
+     * @return message String result of action
      */
     public String bestUnseenRecommendation(final ActionInputData action) {
         User user = ProcessUtils.getUserInstance(action.getUsername(), database.usersDB());
@@ -69,6 +73,8 @@ public final class Recommendations {
     /**
      * Returns first unwatched video from database
      * from the most popular genre
+     * @param action instance of action from input
+     * @return message String result of action
      */
     public String popularRecommendation(final ActionInputData action) {
         User user = ProcessUtils.getUserInstance(action.getUsername(), database.usersDB());
@@ -95,6 +101,8 @@ public final class Recommendations {
     /**
      * Returns first unwatched video from database
      * most frequent in users' favorite videos
+     * @param action instance of action from input
+     * @return message String result of action
      */
     public String favoriteRecommendation(final ActionInputData action) {
         User user = ProcessUtils.getUserInstance(action.getUsername(), database.usersDB());
@@ -118,6 +126,8 @@ public final class Recommendations {
     /**
      * Returns first unwatched video sorted by rating
      * filtered at input
+     * @param action instance of action from input
+     * @return message String result of action
      */
     public String searchRecommendation(final ActionInputData action) {
         User user = ProcessUtils.getUserInstance(action.getUsername(), database.usersDB());

@@ -19,6 +19,8 @@ public final class Queries {
     /**
      * Returns list of actors sorted by the average rating
      * of their filmography
+     * @param action instance of action from input
+     * @return message String result of action
      */
     public String actorAverage(final ActionInputData action) {
         Map<String, Double> averageMap = new HashMap<>();
@@ -54,6 +56,8 @@ public final class Queries {
     /**
      * Returns list of actors filtered by wanted awards and
      * sorted by the total number of awards
+     * @param action instance of action from input
+     * @return message String result of action
      */
     public String actorAwards(final ActionInputData action) {
         List<Actor> actors = ProcessUtils.getFilteredActors(action.getFilters(),
@@ -84,6 +88,8 @@ public final class Queries {
     /**
      * Returns list of actors filtered by wanted words and
      * sorted alphabetically
+     * @param action instance of action from input
+     * @return message String result of action
      */
     public String actorDescription(final ActionInputData action) {
         List<Actor> actors = ProcessUtils.getFilteredActors(action.getFilters(),
@@ -97,6 +103,8 @@ public final class Queries {
 
     /**
      * Returns titles list of videos sorted by rating
+     * @param action instance of action from input
+     * @return message String result of action
      */
     public String videoRatings(final ActionInputData action) {
         List<Video> videos = ProcessUtils.getFilteredVideos(action.getFilters(),
@@ -116,6 +124,8 @@ public final class Queries {
     /**
      * Returns titles list of videos sorted by the number of appearances
      * in users' favorite videos
+     * @param action instance of action from input
+     * @return message String result of action
      */
     public String favoriteVideos(final ActionInputData action) {
         List<Video> videos = ProcessUtils.getFilteredVideos(action.getFilters(),
@@ -127,6 +137,8 @@ public final class Queries {
 
     /**
      * Returns titles list of videos sorted by duration
+     * @param action instance of action from input
+     * @return message String result of action
      */
     public String longestVideos(final ActionInputData action) {
         List<Video> videos = ProcessUtils.getFilteredVideos(action.getFilters(),
@@ -144,6 +156,8 @@ public final class Queries {
 
     /**
      * Returns titles list of videos sorted by number of views
+     * @param action instance of action from input
+     * @return message String result of action
      */
     public String mostViewedVideos(final ActionInputData action) {
         List<Video> videos = ProcessUtils.getFilteredVideos(action.getFilters(),
@@ -159,6 +173,8 @@ public final class Queries {
     /**
      * Returns usernames list of users sorted by number
      * of given ratings
+     * @param action instance of action from input
+     * @return message String result of action
      */
     public String mostActiveUsers(final ActionInputData action) {
         Map<String, Double> usersMap = new HashMap<>();
