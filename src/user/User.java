@@ -7,9 +7,9 @@ import java.util.Map;
 public final class User {
     private final String username;
     private final String subscription;
-    private Map<String, Integer> history;
-    private ArrayList<String> favoriteMovies;
-    private Map<String, Integer> ratedMovies;
+    private final Map<String, Integer> history;
+    private final ArrayList<String> favoriteMovies;
+    private final Map<String, Integer> ratedMovies;
 
     public User(final String username, final String subscriptionType,
                 final Map<String, Integer> history,
@@ -40,6 +40,4 @@ public final class User {
     public Map<String, Integer> getRatedVideos() {
         return ratedMovies;
     }
-
-
 }

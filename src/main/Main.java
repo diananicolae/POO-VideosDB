@@ -73,6 +73,7 @@ public final class Main {
         Writer fileWriter = new Writer(filePath2);
         JSONArray arrayResult = new JSONArray();
 
+        /* Entry point of the data processing */
         Database database = new Database(input);
         ProcessData data = new ProcessData(database);
         data.process(arrayResult, fileWriter);

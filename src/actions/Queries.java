@@ -5,6 +5,7 @@ import common.Constants;
 import entertainment.Video;
 import fileio.ActionInputData;
 import user.User;
+import utils.ProcessUtils;
 
 import java.util.*;
 
@@ -20,14 +21,15 @@ public final class Queries {
      * of their filmography
      */
     public String actorAverage(final ActionInputData action) {
-        // map entries are <actorName, actorAverage>
         Map<String, Double> averageMap = new HashMap<>();
 
-        // determine the average of every actor in the database
+        /* Determine the average of every actor in the database */
         for (Actor actor : database.actorsDB()) {
             double actorAverage = 0.0;
             int ratedFilms = 0;
 
+            /* For every video in the actor's filmography
+            * modify actor's average rating*/
             for (String film : actor.getFilmography()) {
                 Video video = ProcessUtils.getVideoInstance(film, database.videosDB());
                 if (video == null || video.averageRating() == null) {
@@ -36,7 +38,7 @@ public final class Queries {
                 actorAverage += video.averageRating();
                 ratedFilms++;
             }
-            // skip the actor if no video from the filmography is rated
+            /* Skip the actor if no video from the filmography is rated */
             if (ratedFilms == 0) {
                 continue;
             }

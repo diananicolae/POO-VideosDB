@@ -1,5 +1,6 @@
-package actions;
+package utils;
 
+import actions.Database;
 import actor.Actor;
 import common.Constants;
 import entertainment.Movie;
@@ -10,7 +11,6 @@ import fileio.MovieInputData;
 import fileio.SerialInputData;
 import fileio.UserInputData;
 import user.User;
-import utils.Utils;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -133,10 +133,12 @@ public final class ProcessUtils {
         List<Actor> filteredList = new ArrayList<>(database.actorsDB());
 
         if (filters.get(Constants.WORDS_FILTER) != null) {
+            /* Perform regex for every word */
             for (String word : filters.get(Constants.WORDS_FILTER)) {
                 if (word == null) {
                     continue;
                 }
+                /* Remove actor if their description doesn't contain the wanted word */
                 filteredList.removeIf(actor -> !Pattern.compile("[ -]" + word + "[ .,]").
                         matcher(actor.getCareerDescription().toLowerCase()).find());
             }
@@ -146,6 +148,7 @@ public final class ProcessUtils {
                 if (award == null) {
                     continue;
                 }
+                /* Remove actor if they haven't won the wanted award */
                 filteredList.removeIf(actor ->
                         !actor.getAwards().containsKey(Utils.stringToAwards(award)));
             }
@@ -173,6 +176,7 @@ public final class ProcessUtils {
                                                 final Database database) {
         List<Video> filteredList = new ArrayList<>();
 
+        /* Select which list is going to be filtered */
         switch (objectType) {
             case Constants.MOVIES -> {
                 filteredList.addAll(database.moviesDB());
@@ -190,6 +194,7 @@ public final class ProcessUtils {
         if (filters.get(Constants.YEAR_FILTER) != null) {
             for (String year : filters.get(Constants.YEAR_FILTER)) {
                 if (year != null) {
+                    /* Remove video if the release year doesn't match */
                     filteredList.removeIf(video -> video.getYear() != Integer.parseInt(year));
                 }
             }
@@ -198,6 +203,7 @@ public final class ProcessUtils {
         if (filters.get(Constants.GENRE_FILTER) != null) {
             for (String genre : filters.get(Constants.GENRE_FILTER)) {
                 if (genre != null) {
+                    /* Remove video if it's not of the wanted genre */
                     filteredList.removeIf(video -> !video.getGenres().contains(genre));
                 }
             }
@@ -213,6 +219,7 @@ public final class ProcessUtils {
                                                  final int number, final Database database) {
         Map<String, Double> favoriteMap = new HashMap<>();
 
+        /* For every video, iterate through every user's favorite list */
         for (Video video : videos) {
             double favoriteCount = 0;
             for (User user : database.usersDB()) {
@@ -220,6 +227,7 @@ public final class ProcessUtils {
                     favoriteCount++;
                 }
             }
+            /* Add entry of type <title, numberOfAppearances> */
             if (favoriteCount != 0) {
                 favoriteMap.put(video.getTitle(), favoriteCount);
             }
@@ -235,6 +243,9 @@ public final class ProcessUtils {
         List<Map.Entry<String, Double>> mapList = new LinkedList<>(map.entrySet());
         List<String> titles = new ArrayList<>();
 
+        /* Sorts the map entries by the given sort type
+        * ASC/DESC -> by rating, second criteria is the name
+        * DATABASE -> only by rating */
         mapList.sort((entry1, entry2) -> {
             switch (sortType) {
                 case Constants.ASC -> {
@@ -258,6 +269,7 @@ public final class ProcessUtils {
             }
         });
 
+        /* Returns a list of titles or names */
         for (Map.Entry<String, Double> entry : mapList) {
             titles.add(entry.getKey());
         }
@@ -276,6 +288,7 @@ public final class ProcessUtils {
                                                   final Database database) {
         Map<String, Double> viewsMap = new HashMap<>();
 
+        /* For every video, iterate through every user's history */
         for (Video video : videos) {
             double noViews = 0;
             for (User user : database.usersDB()) {
@@ -283,6 +296,7 @@ public final class ProcessUtils {
                     noViews += user.getHistory().get(video.getTitle());
                 }
             }
+            /* Add entry of type <title, totalNoViews */
             if (noViews > 0) {
                 viewsMap.put(video.getTitle(), noViews);
             }
@@ -299,11 +313,16 @@ public final class ProcessUtils {
         Map<String, Double> genreMap = new HashMap<>();
         Map<String, Double> viewsMap = getViewsMap(videos, database);
 
+        /* For every genre of the current video,
+        * add an entry using the video's number of views */
         for (Video video : videos) {
             if (!viewsMap.containsKey(video.getTitle())) {
                 continue;
             }
+            /* Add map entries of type <genreName, totalNoViews> */
             for (String genre : video.getGenres()) {
+                /* If the genre already exists in the map
+                * increase the number of views */
                 if (genreMap.containsKey(genre)) {
                     double noViews = genreMap.get(genre);
                     noViews += viewsMap.get(video.getTitle());

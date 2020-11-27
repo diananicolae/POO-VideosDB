@@ -7,10 +7,14 @@ import entertainment.Video;
 import fileio.ActionInputData;
 import fileio.Input;
 import user.User;
+import utils.ProcessUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Repository for all of the information in the database
+ */
 public class Database {
     private final List<ActionInputData> commands;
     private final List<Actor> actors;

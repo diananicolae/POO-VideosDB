@@ -8,6 +8,9 @@ import org.json.simple.JSONObject;
 
 import java.io.IOException;
 
+/**
+ * Class used to process the actions
+ */
 public final class ProcessData {
     private final Database database;
     private final Commands commands;
@@ -22,13 +25,16 @@ public final class ProcessData {
     }
 
     /**
-     * Number of current season
+     * Process every action in the database
+     * Determines which method should be called
+     * using Action Type, Object Type and Criteria
      */
     public void process(final JSONArray arrayResult, final Writer fileWriter)
             throws IOException {
         for (ActionInputData action : database.commandsDB()) {
             String message = "";
             String field = "";
+            /* Process Commands */
             if (action.getActionType().equals(Constants.COMMAND)) {
                 switch (action.getType()) {
                     case Constants.FAVORITE -> {
@@ -44,6 +50,7 @@ public final class ProcessData {
                     }
                 }
             }
+            /* Process Queries */
             if (action.getActionType().equals(Constants.QUERY)) {
                 switch (action.getObjectType()) {
                     case Constants.ACTORS -> {
@@ -80,15 +87,15 @@ public final class ProcessData {
                         }
                     }
                     case Constants.USERS -> {
-                        if (Constants.NUM_RATINGS.equals(action.getCriteria())) {
+                        if (action.getCriteria().equals(Constants.NUM_RATINGS)) {
                             message = queries.mostActiveUsers(action);
                         }
                     }
                     default -> {
-
                     }
                 }
             }
+            /* Process Recommendations */
             if (action.getActionType().equals(Constants.RECOMMENDATION)) {
                 switch (action.getType()) {
                     case Constants.STANDARD -> {
@@ -107,10 +114,10 @@ public final class ProcessData {
                         message = recommendations.searchRecommendation(action);
                     }
                     default -> {
-
                     }
                 }
             }
+            /* Transform the action result into a JSONObject */
             JSONObject object = fileWriter.writeFile(action.getActionId(), field, message);
             arrayResult.add(object);
         }
